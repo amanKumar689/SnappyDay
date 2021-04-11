@@ -1,0 +1,70 @@
+*{
+    padding:0px;
+    margin:0px;
+    box-sizing:border-box;
+
+}
+.Instagram  >  header
+{ 
+    
+    border:2px solid lightgray;
+  border-top:none;
+    padding:15px 25px 19px 15px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+     position:fixed ;
+    width:600px;
+    z-index: 1;
+    background-color:white;
+    margin-bottom:20px;
+}
+.Instagram  >  header .logo
+ {
+     /* padding-top:8px */
+ }
+.Authhandler{
+
+ padding:10px;
+ width:50px;
+}
+ .Btn_version {
+  width:9rem;
+  padding:0px;
+display:flex;
+justify-content:space-between;
+}
+ .Btn_version button{
+  padding:4px 8px 4px 8px;
+  cursor:pointer;
+
+}
+.MuiAvatar-root:hover{
+    cursor:pointer;
+    background-color:darkgray;
+}
+.MuiAvatar-root ~ span {
+ display:none;
+  border:1px solid lightgray;
+  position: absolute;
+  top:54px;
+  right:10px;
+  cursor: pointer;
+  background-color:white;
+  padding:3px 10px 3px 10px;
+  width:100px ;
+  color:darkgray
+}
+.MuiAvatar-root ~ span:hover { color:black}
+
+.appear{display:block}
+@media screen and (max-width:610px)
+{
+ 
+  .Instagram > header {
+
+   width:100%
+  }
+
+
+}
