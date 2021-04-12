@@ -1,8 +1,13 @@
+
+#root{
+    max-height:100vh;
+    overflow:auto
+}   
 .Instagram{
     position: relative;
     max-width: 600px;
     margin:auto;
-    overflow:hidden
+    overflow:hidden;
 }
 .posthandler{
     width:100%; 

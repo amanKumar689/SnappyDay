@@ -41,6 +41,8 @@ const InstaApp = () => {
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState(false);
   const [counts, setCounts] = useState([]);
+  const [limit, setLimit] = useState(1);
+  const [max, setMax] = useState(1);
   const [message, setmessage] = useState({
     message: null,
     error: null,
@@ -99,94 +101,183 @@ const InstaApp = () => {
     // console.log(e.target.files[0]);
   };
 
+  // single run
+
   useEffect(() => {
-    // javascript sticky nature
+    // Setting max size for post
 
     const Run = () => {
-      window.onscroll = () => {
-        if (window.scrollY >= 40) {
-          document.getElementById("header").style.padding =
-            "15px 25px 9px 15px";
-        } else {
-          document.getElementById("header").style.padding =
-            "15px 25px 19px 15px";
-        }
-      };
-    };
-    // AUth change lisiteners
-
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        setmessage({
-          ...message,
-          open: true,
-          message: "You are Successfully Logged In",
-          severity: "success",
-        });
-
-        setAuth(true);
-        setUsername(user.displayName);
-      } else {
-        setAuth(false);
-      }
-    });
-
-    // Fetching Post from database
-
+    let max_var = 0;
     firebase
       .firestore()
       .collection("Post")
-      .orderBy("Time", "desc")
-      .onSnapshot((doc) => {
-        let post_var = [];
-        doc.forEach((eachDoc) => {
-          post_var.push(eachDoc);
-          //  console.log("DOC:",eachDoc.data());
+      .get()
+      .then((doc) => {
+        doc.forEach((val) => {
+          max_var += 1;
         });
-        setPosts(post_var);
+        setMax(max_var);
+      })
+      .catch((err) => {
+        console.log(err);
       });
 
-    Run();
 
-    firebase
+     // Fetching first Time
+let post_var = []
+      firebase
       .firestore()
-      .collection("comments")
-      .orderBy("Time")
-      .onSnapshot((commentSnap) => {
-        // console.log("comments:",comments );
-
-        // console.log("ONsnap:",id)
-        let Comment_var = [];
-        commentSnap.forEach((EachComment) => {
-          Comment_var.push(EachComment.data());
+      .collection("Post").orderBy('Time','desc').limit(1)
+      .get()
+      .then((doc) => {
+         doc.forEach((val) => {
+          post_var.push(val)
         });
-
-        setComments(Comment_var);
+        setPosts(post_var)
+      })
+      .catch((err) => {
+        console.log(err);
       });
 
-    // Let's Fetch the Like
+    // javascript sticky nature
     
-    firebase
-    .firestore()
-    .collection("Likes")
-    .onSnapshot((doc) => {
-        let Likes = [];
-        doc.forEach((eachDoc) => {
-          // console.log(eachDoc.data());
-          Likes.push({
-            id: eachDoc.id,
-            count: eachDoc.data().count,
-            username: eachDoc.data().username,
-          });
-        });
-        console.log(Likes);
+      // AUth change lisiteners
 
-        setCounts(Likes);
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          setmessage({
+            ...message,
+            open: true,
+            message: "You are Successfully Logged In",
+            severity: "success",
+          });
+
+          setAuth(true);
+          setUsername(user.displayName);
+        } else {
+          setAuth(false);
+        }
       });
-  }, []);
+
+      // Fetching Post from database
+
+
+      // Fetch Likes
+
+      firebase
+        .firestore()
+        .collection("comments")
+        .orderBy("Time")
+        .onSnapshot((commentSnap) => {
+          // console.log("comments:",comments );
+
+          // console.log("ONsnap:",id)
+          let Comment_var = [];
+          commentSnap.forEach((EachComment) => {
+            Comment_var.push(EachComment.data());
+          });
+
+          setComments(Comment_var);
+        });
+
+      // Let's Fetch the Like
+
+      firebase
+        .firestore()
+        .collection("Likes")
+        .onSnapshot((doc) => {
+          let Likes = [];
+          doc.forEach((eachDoc) => {
+            // console.log(eachDoc.data());
+            Likes.push({
+              id: eachDoc.id,
+              count: eachDoc.data().count,
+              username: eachDoc.data().username,
+            });
+          });
+          console.log(Likes);
+
+          setCounts(Likes);
+        });
+    };
+    Run();
+    return Run;
+  }, [max]);
+
+
+
+  // 2nd UseEffect
+
+
+
+useEffect(() => {
+  
+  console.log("running");
+  const fun = () =>{
+
+    const Fetch_by_limit =() =>{
+
+  firebase
+        .firestore()
+        .collection("Post")
+        .limit(limit).orderBy('Time','desc')
+        .get()
+        .then((doc) => {
+          let post_var = [];
+          doc.forEach((eachDoc) => {
+            post_var.push(eachDoc);
+            //  console.log("DOC:",eachDoc.data());
+          });
+          setPosts(post_var);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+ }
+
+ Fetch_by_limit()
+ 
+    document.getElementById("root").onscroll = () => {
+      
+      if (document.getElementById("root").scrollTop >= 40) {
+        document.getElementById("header").style.padding =
+          "15px 25px 9px 15px";
+      } else {
+        document.getElementById("header").style.padding =
+          "15px 25px 19px 15px";
+      }
+
+      if (
+        document.getElementById("root").scrollHeight - window.innerHeight <=
+        document.getElementById("root").scrollTop +10
+      ) {
+        
+        Fetch_by_limit()
+        
+      
+        limit<=max &&  setLimit(prev=>prev+1)
+      
+      }
+    };
+  
+  }
+  fun()
+  return fun
+}, [limit])
+
+
+
+
+
+
+
+
+
+  //  console.log("max",max);
+  //  console.log("limit",limit);
 
   return (
-    <div className="Instagram">
+    <div className="Instagram" id="Instagram">
       <Snackbar
         open={message.open}
         autoHideDuration={4000}
@@ -409,6 +500,7 @@ const InstaApp = () => {
                   setProgress(prog);
                   document.getElementById("file").value = null;
                   setCaption("");
+                  setLimit(prev=>prev+1)
                   // console.log("solved");
                 })
                 .catch((err) => {
@@ -441,7 +533,6 @@ const InstaApp = () => {
                   return count;
                 }
               })}
-              
               alt={Eachpost.data().alt}
             />
           ))}
@@ -451,3 +542,4 @@ const InstaApp = () => {
 };
 
 export default InstaApp;
+

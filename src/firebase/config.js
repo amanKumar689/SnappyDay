@@ -1,11 +1,10 @@
 import firebase from 'firebase'
 const firebaseConfig = {
-    apiKey: "AIzaSyCVinObGBXWT-FnIhVSmI-y5axdNQ8RTWU",
-    authDomain: "snappyday-4ea25.firebaseapp.com",
-    projectId: "snappyday-4ea25",
-    storageBucket: "snappyday-4ea25.appspot.com",
-    messagingSenderId: "926847745884",
-    appId: "1:926847745884:web:48fc1c8a42b19fd2a90b99"
-  };
-  
+  apiKey: "AIzaSyBFkoAVdtZ2GLcPOoy8AJP_bRezMfIMTDU",
+  authDomain: "snappyday-30112001.firebaseapp.com",
+  projectId: "snappyday-30112001",
+  storageBucket: "snappyday-30112001.appspot.com",
+  messagingSenderId: "173328461166",
+  appId: "1:173328461166:web:971df47afa6fd6ac73a57f"
+};
 firebase.initializeApp(firebaseConfig)

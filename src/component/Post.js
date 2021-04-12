@@ -8,7 +8,6 @@ import redHeart from '../SVG/redHeart.png'
 import Like_upload from '../firebase/Like_upload'
 const Post = ({Auth,caption,username,imageURL,alt,id,Postusername,comments,count}) => {
   
-console.log("COUNT:",count[0]?.username);
   const [comment,setComment] = useState([])
   const [clickStatus ,setClickStatus] = useState(true)
   const [likeStatus,setLikeStatus] =useState(false)
@@ -39,7 +38,6 @@ console.log("COUNT:",count[0]?.username);
                   setClickStatus(false)               
            Like_upload(!likeStatus,id,username,Postusername).then(()=>{
 
-        console.log("runn");
           setClickStatus(true)
            }
            ).catch(err=>{console.log(err)})
