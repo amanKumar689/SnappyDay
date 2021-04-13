@@ -19,7 +19,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
 import { makeStyles } from "@material-ui/core/styles";
-import Skelton from './component/Skelton'
+import Skelton from "./component/Skelton";
 const useStyles = makeStyles({
   root: {
     width: "100%",
@@ -108,40 +108,41 @@ const InstaApp = () => {
     // Setting max size for post
 
     const Run = () => {
-    let max_var = 0;
-    firebase
-      .firestore()
-      .collection("Post")
-      .get()
-      .then((doc) => {
-        doc.forEach((val) => {
-          max_var += 1;
-        });
-        setMax(max_var);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-
-     // Fetching first Time
-let post_var = []
+      let max_var = 0;
       firebase
-      .firestore()
-      .collection("Post").orderBy('Time','desc').limit(1)
-      .get()
-      .then((doc) => {
-         doc.forEach((val) => {
-          post_var.push(val)
+        .firestore()
+        .collection("Post")
+        .get()
+        .then((doc) => {
+          doc.forEach((val) => {
+            max_var += 1;
+          });
+          setMax(max_var);
+        })
+        .catch((err) => {
+          console.log(err);
         });
-        setPosts(post_var)
-      })
-      .catch((err) => {
-        console.log(err);
-      });
 
-    // javascript sticky nature
-    
+      // Fetching first Time
+      let post_var = [];
+      firebase
+        .firestore()
+        .collection("Post")
+        .orderBy("Time", "desc")
+        .limit(1)
+        .get()
+        .then((doc) => {
+          doc.forEach((val) => {
+            post_var.push(val);
+          });
+          setPosts(post_var);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
+      // javascript sticky nature
+
       // AUth change lisiteners
 
       firebase.auth().onAuthStateChanged((user) => {
@@ -161,7 +162,6 @@ let post_var = []
       });
 
       // Fetching Post from database
-
 
       // Fetch Likes
 
@@ -196,8 +196,6 @@ let post_var = []
               username: eachDoc.data().username,
             });
           });
-          console.log(Likes);
-
           setCounts(Likes);
         });
     };
@@ -205,77 +203,54 @@ let post_var = []
     return Run;
   }, [max]);
 
-
-
   // 2nd UseEffect
 
-
-
-useEffect(() => {
-  
-  console.log("running");
-  const fun = () =>{
-
-    const Fetch_by_limit =() =>{
-
-  firebase
-        .firestore()
-        .collection("Post")
-        .limit(limit).orderBy('Time','desc')
-        .get()
-        .then((doc) => {
-          let post_var = [];
-          doc.forEach((eachDoc) => {
-            post_var.push(eachDoc);
-            //  console.log("DOC:",eachDoc.data());
+  useEffect(() => {
+    const fun = () => {
+      const Fetch_by_limit = () => {
+        firebase
+          .firestore()
+          .collection("Post")
+          .limit(limit)
+          .orderBy("Time", "desc")
+          .get()
+          .then((doc) => {
+            let post_var = [];
+            doc.forEach((eachDoc) => {
+              post_var.push(eachDoc);
+              //  console.log("DOC:",eachDoc.data());
+            });
+            setPosts(post_var);
+          })
+          .catch((err) => {
+            console.log(err);
           });
-          setPosts(post_var);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
- }
+      };
 
- Fetch_by_limit()
- 
-    document.getElementById("root").onscroll = () => {
-      
-      if (document.getElementById("root").scrollTop >= 40) {
-        document.getElementById("header").style.padding =
-          "15px 25px 9px 15px";
-      } else {
-        document.getElementById("header").style.padding =
-          "15px 25px 19px 15px";
-      }
+      Fetch_by_limit();
 
-      if (
-        document.getElementById("root").scrollHeight - window.innerHeight <=
-        document.getElementById("root").scrollTop +10
-      ) {
-        
-        Fetch_by_limit()
-        
-      
-        limit<=max &&  setLimit(prev=>prev+1)
-      
-      }
+      document.getElementById("root").onscroll = () => {
+        if (document.getElementById("root").scrollTop >= 40) {
+          document.getElementById("header").style.padding =
+            "15px 25px 9px 15px";
+        } else {
+          document.getElementById("header").style.padding =
+            "15px 25px 19px 15px";
+        }
+
+        if (
+          document.getElementById("root").scrollHeight - window.innerHeight <=
+          document.getElementById("root").scrollTop + 10
+        ) {
+          Fetch_by_limit();
+
+          limit <= max && setLimit((prev) => prev + 1);
+        }
+      };
     };
-  
-  }
-  fun()
-  return fun
-}, [limit])
-
-
-
-
-
-
-
-
-
-  //  console.log("max",max);
-  //  console.log("limit",limit);
+    fun();
+    return fun;
+  }, [limit]);
 
   return (
     <div className="Instagram" id="Instagram">
@@ -427,6 +402,7 @@ useEffect(() => {
                         message: "You are Logged out !!!",
                         severity: "success",
                       });
+                     setUsername("") 
                     });
                   }}
                 >
@@ -458,7 +434,7 @@ useEffect(() => {
         </div>
       </header>
 
-      <div className="posthandler">
+     {  Auth && ( <div className="posthandler">
         <br />
         <div className="choose_wrapper">
           <img src={upload} alt="" />
@@ -501,7 +477,7 @@ useEffect(() => {
                   setProgress(prog);
                   document.getElementById("file").value = null;
                   setCaption("");
-                  setLimit(prev=>prev+1)
+                  setLimit((prev) => prev + 1);
                   // console.log("solved");
                 })
                 .catch((err) => {
@@ -515,9 +491,10 @@ useEffect(() => {
             }}
           />
         </div>
-      </div>
+      </div> )
+      }
       <div className="post_body">
-        {posts ?
+        {posts ? (
           posts.map((Eachpost, index) => (
             <Post
               Auth={Auth}
@@ -536,15 +513,13 @@ useEffect(() => {
               })}
               alt={Eachpost.data().alt}
             />
-          )) :
-            
-           <Skelton/>
-          
-          }
+          ))
+        ) : (
+          <Skelton />
+        )}
       </div>
     </div>
   );
 };
 
 export default InstaApp;
-

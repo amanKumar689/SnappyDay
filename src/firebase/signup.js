@@ -1,11 +1,9 @@
 import firebase from 'firebase'
 const signup = (email , password, username)=>{
 
-  //  console.log(username);
- 
   return new Promise((resolve,reject)=>{
  
-     if(username=="")
+     if(username!="")
      {
 
        
