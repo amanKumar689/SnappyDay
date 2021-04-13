@@ -25,7 +25,7 @@ const Like_upload = (likeStatus, id, username, Postusername) => {
             ? --doc.data().count
             : 0,
           username:likeStatus ? (doc.data()?.username== undefined ? [username]: [...doc.data().username , username]) 
-                              : (doc.data()?.username== undefined ? "null":doc.data().username.filter(name=>name!=username)) 
+                              : (doc.data()?.username== undefined ? []:doc.data().username.filter(name=>name!=username)) 
            
         })
         .then((doxRef) => {

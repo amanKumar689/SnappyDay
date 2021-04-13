@@ -505,12 +505,7 @@ const InstaApp = () => {
               username={username}
               Postusername={Eachpost.data().username}
               imageURL={Eachpost.data().imageURL}
-              count={counts.filter((count) => {
-                // console.log("MAPPP",count)
-                if (Eachpost.id == count.id) {
-                  return count;
-                }
-              })}
+              counts={counts}
               alt={Eachpost.data().alt}
             />
           ))

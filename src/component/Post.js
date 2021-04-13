@@ -1,24 +1,54 @@
 import React, { useState ,useEffect } from "react";
-import firebase from 'firebase'
 import "../style/post.css";
 import "../style/footer.css";
 import comment_upload from '../firebase/comment_upload'
 import heart from '../SVG/heart.png'
 import redHeart from '../SVG/redHeart.png'
 import Like_upload from '../firebase/Like_upload'
-const Post = ({Auth,caption,username,imageURL,alt,id,Postusername,comments,count}) => {
+const Post = ({Auth,caption,username,imageURL,alt,id,Postusername,comments,counts}) => {
   
+
   const [comment,setComment] = useState([])
   const [clickStatus ,setClickStatus] = useState(true)
   const [likeStatus,setLikeStatus] =useState(false)
-  
+const [count ,setCount] =useState(0);
+     
   useEffect(() => {
-    
-    count[0]?.username.map(name=>{
-      name == username && setLikeStatus(true);
-    })
+     
+ 
+    // Setting Count 
    
-  }, [count])
+    counts.length!=0 &&   counts.every((count) => {       
+       // Just iterating my Likes of post
+  
+       for (let index = 0; index < counts.length; index++) {
+      let count = counts[index]
+         if (id == count.id) {         
+        //   Checking For match
+      
+        // console.log("Count",count.count);
+        setCount(count.count)
+        //   console.log("Found in record",id);
+         count.username.map((countUsername ,index)=>{
+            countUsername == username && setLikeStatus(true) 
+          
+          })
+        break;
+        }
+        else if(counts.length -1 == index)
+        { 
+          setLikeStatus(false)
+          setCount(0)
+         
+        }
+       
+
+       }
+
+  })  
+ 
+ 
+  }, [id,counts])
   
    
   return (
@@ -45,7 +75,7 @@ const Post = ({Auth,caption,username,imageURL,alt,id,Postusername,comments,count
            }
            }}/> 
         
-         </p> <span style={{float:"right"}}>Like {count[0]?.count} </span> 
+         </p> <span style={{float:"right"}}>Like {count} </span> 
          <br /> <br/> comments  <br/><br/>
          {comments.map(comment=> <p> {comment.comment} </p>)}
 
