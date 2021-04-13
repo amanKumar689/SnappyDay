@@ -339,7 +339,7 @@ useEffect(() => {
                       setmessage({
                         ...message,
                         open: true,
-                        message: err.message,
+                        message: err,
                         severity: "error",
                       });
                     });
