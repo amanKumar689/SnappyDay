@@ -503,6 +503,7 @@ const InstaApp = () => {
           </div>
         </div>
       )}
+      
       <div className="post_body">
         {posts ? (
           posts.map((Eachpost, index) => (

@@ -73,6 +73,33 @@ p {
   cursor: pointer;
 }
 
+
+/* width */
 ::-webkit-scrollbar {
-  width: 0px;
+  width: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-right:1px solid lightgray;
+  }
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #b0b0b0;
+  border-radius:50px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+#root {
+  box-sizing:border-box;
+  width: 600px;
+}
+#snappyDay{
+  display:flex;
+  justify-content:center
 }
