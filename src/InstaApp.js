@@ -104,19 +104,19 @@ const InstaApp = () => {
 
   // Snapshot for updated data when uploading
 
-  useEffect(() => {             
+  useEffect(() => {
     var unsubcribe = firebase
       .firestore()
       .collection("Post")
       .onSnapshot((snapshot) => {
-      // console.log("");
+        // console.log("");
         const post_var = [];
-        snapshot.docChanges().length ==1 && snapshot.docChanges().forEach((doc) => {
-          // first listen for  snapshot -- docChanges() gives  DOCS -- type = added || remove || modified
-         
-          doc.type === 'added' &&  post_var.push(doc.doc);
+        snapshot.docChanges().length == 1 &&
+          snapshot.docChanges().forEach((doc) => {
+            // first listen for  snapshot -- docChanges() gives  DOCS -- type = added || remove || modified
 
-        });
+            doc.type === "added" && post_var.push(doc.doc);
+          });
 
         setPosts((prevState) => {
           return [...post_var, ...prevState];
@@ -141,7 +141,6 @@ const InstaApp = () => {
         .then((doc) => {
           doc.forEach((val) => {
             post_var.push(val);
-            console.log("limit");
           });
           setPosts(post_var);
           var lastVisible = doc.docs[doc.docs.length - 1];
