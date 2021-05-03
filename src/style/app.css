@@ -1,39 +1,36 @@
-
-#root{
-    max-height:100vh;
-    overflow:auto
-}   
-.Instagram{
-    position: relative;
-    max-width: 600px;
-    margin:auto;
-    overflow:hidden;
+#root {
+  max-height: 100vh;
+  overflow: auto;
 }
-.posthandler{
-    width:100%; 
-  margin-top:70px;
-  min-height:50px;
- margin-bottom:10px;
- padding:10px
+.Instagram {
+  position: relative;
+  max-width: 600px;
+  margin: auto;
+  overflow: hidden;
 }
-#file{
-    opacity: 1;
-    position: absolute;
-    left:0px;   
-    width:50px;
- 
-
+.posthandler {
+  width: 100%;
+  margin-top: 70px;
+  min-height: 50px;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+#file {
+  opacity: 1;
+  position: absolute;
+  left: 0px;
+  width: 50px;
 }
 #file::-webkit-file-upload-button {
   visibility: hidden;
 }
 #file:focus {
-    outline:none
+  outline: none;
 }
-#file::before{
+#file::before {
   display: inline-block;
-   cursor: pointer;
-   border: 1px solid #999;
+  cursor: pointer;
+  border: 1px solid #999;
   border-radius: 3px;
   padding: 5px 8px;
   outline: none;
@@ -45,37 +42,46 @@
   font-size: 10pt;
 }
 .choose_wrapper {
-    padding-left:2%;
-    margin-bottom:20px;
+  padding-left: 2%;
+  margin-bottom: 20px;
 }
 .choose_wrapper img {
-    width: 30px;
+  width: 30px;
 }
 .captionHandler {
-    display: flex;
-    justify-content:space-evenly;
-  }
+  display: flex;
+  justify-content: space-evenly;
+}
 .captionHandler img {
-    width:30px;
-    cursor: pointer;
+  width: 30px;
+  cursor: pointer;
 }
 #caption {
-    padding:10px;
-    outline:none;
-    border:1px solid gray;
-    border-radius:5px;
-    width:60%;
+  padding: 10px;
+  outline: none;
+  border: 1px solid gray;
+  border-radius: 5px;
+  width: 60%;
 }
-.Modal {
-    width:60%;
-    background-color:white;
-    height:300px;
-    margin:auto;
-    margin-top:100px;
-    padding:30px
+.Modal form {
+  width: 60%;
+  max-width: 600px;
+  background-color: white;
+  height: 300px;
+  margin: auto;
+  margin-top: 100px;
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
-.Modal input{
-    padding:10px;
-    margin-bottom:20px;
+
+.Modal input {
+  padding: 10px;
+  margin-bottom: 20px;
+  height: 40px;
+  width: 100%;
 }
-#sign_up_btn{cursor: pointer;}
+#sign_up_btn {
+  cursor: pointer;
+}

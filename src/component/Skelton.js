@@ -1,21 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { makeStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
-import CardContent from '@material-ui/core/CardContent';
-import CardMedia from '@material-ui/core/CardMedia';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Skeleton from '@material-ui/lab/Skeleton';
+import React from "react";
+import PropTypes from "prop-types";
+import { makeStyles } from "@material-ui/core/styles";
+import Card from "@material-ui/core/Card";
+import CardHeader from "@material-ui/core/CardHeader";
+import CardContent from "@material-ui/core/CardContent";
+import CardMedia from "@material-ui/core/CardMedia";
+import Typography from "@material-ui/core/Typography";
+import IconButton from "@material-ui/core/IconButton";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import Skeleton from "@material-ui/lab/Skeleton";
 
 const useStyles = makeStyles((theme) => ({
   card: {
     maxWidth: 600,
     margin: theme.spacing(4),
-    marginBottom:"40px"
+    marginBottom: "40px",
   },
   media: {
     height: 220,
@@ -27,9 +26,8 @@ function Media(props) {
   const classes = useStyles();
 
   return (
-    <Card className={classes.card} >
+    <Card className={classes.card}>
       <CardHeader
-    
         action={
           loading ? null : (
             <IconButton aria-label="settings">
@@ -39,12 +37,23 @@ function Media(props) {
         }
         title={
           loading ? (
-            <Skeleton animation="wave" height={10} width="80%" style={{ marginBottom: 6 }} />
+            <Skeleton
+              animation="wave"
+              height={10}
+              width="80%"
+              style={{ marginBottom: 6 }}
+            />
           ) : (
-            'Ted'
+            "Ted"
           )
         }
-        subheader={loading ? <Skeleton animation="wave" height={10} width="40%" /> : '5 hours ago'}
+        subheader={
+          loading ? (
+            <Skeleton animation="wave" height={10} width="40%" />
+          ) : (
+            "5 hours ago"
+          )
+        }
       />
       {loading ? (
         <Skeleton animation="wave" variant="rect" className={classes.media} />
@@ -59,7 +68,11 @@ function Media(props) {
       <CardContent>
         {loading ? (
           <React.Fragment>
-            <Skeleton animation="wave" height={10} style={{ marginBottom: 6 }} />
+            <Skeleton
+              animation="wave"
+              height={10}
+              style={{ marginBottom: 6 }}
+            />
             <Skeleton animation="wave" height={10} width="80%" />
           </React.Fragment>
         ) : (
@@ -78,22 +91,21 @@ Media.propTypes = {
   loading: PropTypes.bool,
 };
 
- function Facebook() {
+function Facebook() {
   return (
     <div>
       <Media loading />
-     
     </div>
   );
 }
 const Skelton = () => {
-    return (
-        <div>
-            <Facebook/>
-            <Facebook/>
-            <Facebook/>
-        </div>
-    )
-}
+  return (
+    <div>
+      <Facebook />
+      <Facebook />
+      <Facebook />
+    </div>
+  );
+};
 
-export default Skelton
+export default Skelton;

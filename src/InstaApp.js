@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./firebase/config";
 import firebase from "firebase";
 import "./style/header.css";
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 const InstaApp = () => {
   const classes = useStyles();
   const [comments, setComments] = useState([]);
-
+  const [lastVisible, setLastVisible] = useState(null);
   const [loginOpen, set_Login_Open] = useState(false);
   const [signUpOpen, set_SignUp_Open] = useState(false);
   const [username, setUsername] = useState("");
@@ -38,12 +38,11 @@ const InstaApp = () => {
   const [appear, setAppear] = useState(false);
   const [file, setFile] = useState(null);
   const [caption, setCaption] = useState("");
-  const [posts, setPosts] = useState(null);
+  const [posts, setPosts] = useState([]);
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState(false);
   const [counts, setCounts] = useState([]);
-  const [limit, setLimit] = useState(1);
-  const [max, setMax] = useState(1);
+  const [snapActive, setSnapActive] = useState(false);
   const [message, setmessage] = useState({
     message: null,
     error: null,
@@ -55,6 +54,8 @@ const InstaApp = () => {
       display: "block",
     },
   };
+
+  const sendBtnRef = useRef();
 
   //  ProgressBar
 
@@ -99,49 +100,56 @@ const InstaApp = () => {
   const upload_file_Handler = (e) => {
     e.target.style.width = "auto";
     setFile(e.target.files[0]);
-    // console.log(e.target.files[0]);
   };
 
-  // single run
+  // Snapshot for updated data when uploading
 
-  useEffect(() => {
-    // Setting max size for post
+  useEffect(() => {             
+    var unsubcribe = firebase
+      .firestore()
+      .collection("Post")
+      .onSnapshot((snapshot) => {
+      // console.log("");
+        const post_var = [];
+        snapshot.docChanges().length ==1 && snapshot.docChanges().forEach((doc) => {
+          // first listen for  snapshot -- docChanges() gives  DOCS -- type = added || remove || modified
+         
+          doc.type === 'added' &&  post_var.push(doc.doc);
 
-    const Run = () => {
-      let max_var = 0;
-      firebase
-        .firestore()
-        .collection("Post")
-        .get()
-        .then((doc) => {
-          doc.forEach((val) => {
-            max_var += 1;
-          });
-          setMax(max_var);
-        })
-        .catch((err) => {
-          console.log(err);
         });
 
-      // Fetching first Time
+        setPosts((prevState) => {
+          return [...post_var, ...prevState];
+        });
+      });
+
+    return unsubcribe;
+  }, []);
+
+  // includes ::-   Fetching first time with limit && Auth listener &&    Like snapshot   &&   Comment Snapshot
+
+  useEffect(() => {
+    const Run = () => {
+      // Fteching Post first time limit - 5
       let post_var = [];
       firebase
         .firestore()
         .collection("Post")
         .orderBy("Time", "desc")
-        .limit(1)
+        .limit(5)
         .get()
         .then((doc) => {
           doc.forEach((val) => {
             post_var.push(val);
+            console.log("limit");
           });
           setPosts(post_var);
+          var lastVisible = doc.docs[doc.docs.length - 1];
+          setLastVisible(lastVisible);
         })
         .catch((err) => {
           console.log(err);
         });
-
-      // javascript sticky nature
 
       // AUth change lisiteners
 
@@ -161,9 +169,7 @@ const InstaApp = () => {
         }
       });
 
-      // Fetching Post from database
-
-      // Fetch Likes
+      // Fetch Comments Live snapshot
 
       firebase
         .firestore()
@@ -181,7 +187,7 @@ const InstaApp = () => {
           setComments(Comment_var);
         });
 
-      // Let's Fetch the Like
+      // Fetch the Like Live snapshot
 
       firebase
         .firestore()
@@ -200,34 +206,38 @@ const InstaApp = () => {
         });
     };
     Run();
-    return Run;
-  }, [max]);
 
-  // 2nd UseEffect
+    return Run;
+  }, []);
+
+  //  Run After scroll down to bottom
 
   useEffect(() => {
     const fun = () => {
       const Fetch_by_limit = () => {
-        firebase
-          .firestore()
-          .collection("Post")
-          .limit(limit)
-          .orderBy("Time", "desc")
-          .get()
-          .then((doc) => {
-            let post_var = [];
-            doc.forEach((eachDoc) => {
-              post_var.push(eachDoc);
-              //  console.log("DOC:",eachDoc.data());
+        lastVisible != undefined &&
+          firebase
+            .firestore()
+            .collection("Post")
+            .orderBy("Time", "desc")
+            .startAfter(lastVisible)
+            .limit(5)
+            .get()
+            .then((doc) => {
+              let post_var = [];
+              doc.forEach((eachDoc) => {
+                post_var.push(eachDoc);
+              });
+              setPosts((prevState) => {
+                return [...prevState, ...post_var];
+              });
+              var lastDoc = doc.docs[doc.docs.length - 1];
+              lastDoc != undefined && setLastVisible(lastDoc);
+            })
+            .catch((err) => {
+              console.log("err", err);
             });
-            setPosts(post_var);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
       };
-
-      Fetch_by_limit();
 
       document.getElementById("root").onscroll = () => {
         if (document.getElementById("root").scrollTop >= 40) {
@@ -243,15 +253,12 @@ const InstaApp = () => {
           document.getElementById("root").scrollTop + 10
         ) {
           Fetch_by_limit();
-
-          limit <= max && setLimit((prev) => prev + 1);
         }
       };
     };
     fun();
     return fun;
-  }, [limit]);
-
+  }, [lastVisible]);
   return (
     <div className="Instagram" id="Instagram">
       <Snackbar
@@ -402,7 +409,7 @@ const InstaApp = () => {
                         message: "You are Logged out !!!",
                         severity: "success",
                       });
-                     setUsername("") 
+                      setUsername("");
                     });
                   }}
                 >
@@ -434,65 +441,69 @@ const InstaApp = () => {
         </div>
       </header>
 
-     {  Auth && ( <div className="posthandler">
-        <br />
-        <div className="choose_wrapper">
-          <img src={upload} alt="" />
-          <input
-            type="file"
-            name=""
-            id="file"
-            onChange={(e) => {
-              upload_file_Handler(e);
-            }}
-          />
-        </div>
-        <div className={classes.root}>
-          {progressStatus && <LinearProgressWithLabel value={progress} />}
-        </div>
-        <div className="captionHandler">
-          <input
-            type="text"
-            name=""
-            value={caption}
-            id="caption"
-            placeholder="Add a caption"
-            onChange={(e) => {
-              setCaption(e.target.value);
-            }}
-          />
-          <img
-            src={post}
-            onClick={() => {
-              setProgressStatus(true);
-              upload_post(file, username, caption, progressHandler)
-                .then((prog) => {
-                  setProgressStatus(false);
-                  setmessage({
-                    ...message,
-                    open: true,
-                    message: "Uploaded Successfully",
-                    severity: "success",
+      {Auth && (
+        <div className="posthandler">
+          <br />
+          <div className="choose_wrapper">
+            <img src={upload} alt="" />
+            <input
+              type="file"
+              name=""
+              id="file"
+              onChange={(e) => {
+                upload_file_Handler(e);
+              }}
+            />
+          </div>
+          <div className={classes.root}>
+            {progressStatus && <LinearProgressWithLabel value={progress} />}
+          </div>
+          <div className="captionHandler">
+            <input
+              type="text"
+              name=""
+              value={caption}
+              id="caption"
+              placeholder="Add a caption"
+              onChange={(e) => {
+                setCaption(e.target.value);
+              }}
+              onKeyPress={(e) => {
+                e.key === "Enter" && sendBtnRef.current.click();
+              }}
+            />
+            <img
+              ref={sendBtnRef}
+              src={post}
+              onClick={() => {
+                setProgressStatus(true);
+                upload_post(file, username, caption, progressHandler) //         upload handler...............
+                  .then((prog, docRef) => {
+                    setProgressStatus(false);
+                    setmessage({
+                      ...message,
+                      open: true,
+                      message: "Uploaded Successfully",
+                      severity: "success",
+                    });
+                    setProgress(prog);
+                    document.getElementById("file").value = null;
+                    setCaption("");
+                  })
+                  .catch((err) => {
+                    setProgressStatus(false);
+                    setmessage({
+                      ...message,
+                      open: true,
+                      message: err,
+                      severity: "error",
+                    });
                   });
-                  setProgress(prog);
-                  document.getElementById("file").value = null;
-                  setCaption("");
-                  setLimit((prev) => prev + 1);
-                  // console.log("solved");
-                })
-                .catch((err) => {
-                  setmessage({
-                    ...message,
-                    open: true,
-                    message: err,
-                    severity: "error",
-                  });
-                });
-            }}
-          />
+              }}
+            />
+          </div>
         </div>
-      </div> )
-      }
+      )}
       <div className="post_body">
         {posts ? (
           posts.map((Eachpost, index) => (
