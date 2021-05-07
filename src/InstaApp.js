@@ -42,7 +42,7 @@ const InstaApp = () => {
   const [progress, setProgress] = useState(0);
   const [progressStatus, setProgressStatus] = useState(false);
   const [counts, setCounts] = useState([]);
-  const [snapActive, setSnapActive] = useState(false);
+  const [fetchStatus, setfetchStatus] = useState(true);
   const [message, setmessage] = useState({
     message: null,
     error: null,
@@ -214,6 +214,7 @@ const InstaApp = () => {
   useEffect(() => {
     const fun = () => {
       const Fetch_by_limit = () => {
+        setfetchStatus(false);
         lastVisible != undefined &&
           firebase
             .firestore()
@@ -232,6 +233,7 @@ const InstaApp = () => {
               });
               var lastDoc = doc.docs[doc.docs.length - 1];
               lastDoc != undefined && setLastVisible(lastDoc);
+              setfetchStatus(true);
             })
             .catch((err) => {
               console.log("err", err);
@@ -249,15 +251,15 @@ const InstaApp = () => {
 
         if (
           document.getElementById("root").scrollHeight - window.innerHeight <=
-          document.getElementById("root").scrollTop + 10
+          document.getElementById("root").scrollTop + 60
         ) {
-          Fetch_by_limit();
+          fetchStatus && Fetch_by_limit();
         }
       };
     };
     fun();
     return fun;
-  }, [lastVisible]);
+  }, [lastVisible, fetchStatus]);
   return (
     <div className="Instagram" id="Instagram">
       <Snackbar
@@ -503,7 +505,7 @@ const InstaApp = () => {
           </div>
         </div>
       )}
-      
+
       <div className="post_body">
         {posts ? (
           posts.map((Eachpost, index) => (

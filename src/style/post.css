@@ -9,7 +9,7 @@
 }
 .post > img {
   width: 100%;
-  height: 300px;
+  min-height: 300px;
   object-fit: cover;
 }
 footer {
@@ -102,4 +102,10 @@ p {
 #snappyDay{
   display:flex;
   justify-content:center
+}
+.caption p img {
+  user-select:none;
+}
+.caption p  ~ span{
+  user-select:none;
 }
